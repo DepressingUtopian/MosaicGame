@@ -72,7 +72,9 @@ public class CropImage : MonoBehaviour
                        // block.GetComponent<Renderer>().material.color = Color.white;
                         block.GetComponent<Renderer>().transform.Rotate(0,0,180, Space.Self);
                         block.GetComponent<Renderer>().material.mainTexture = cut_texture;
-                       
+                        
+
+
                     }
                         //block.transform.localScale += new Vector3((float) (deltaX * 0.01),(float) (deltaY * 0.01), 0);
                         //block.transform.position += new Vector3((float)(x * 0.01), (float)(y * 0.01), 0);

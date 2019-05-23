@@ -19,7 +19,8 @@ public class Control : MonoBehaviour
     private void OnMouseDown()
     {
         Debug.Log("MOSAIC TOUCH");
-        
+        this.GetComponent<Renderer>().material.shader = Shader.Find("Custom/OutlineObjects");
+
     }
 }
 
