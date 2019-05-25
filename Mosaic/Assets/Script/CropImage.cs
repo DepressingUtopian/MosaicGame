@@ -7,6 +7,7 @@ using System.IO;
 public class CropImage : MonoBehaviour
 {
     public GameObject pointerURL_GameObject;
+    public GameObject pointerURL_MosaicTile;
 
     private GameObject []mosaicBlocks;
 
@@ -15,12 +16,16 @@ public class CropImage : MonoBehaviour
 
     public int verticalBlockCount = 8;
     public int gorizontalBlockCount = 10;
+
     private Dictionary<int, GameObject> GameObjectMosaicDictionaty;
+    private Dictionary<int, GameObject> MosaicTileDictionaty;
+
     public string imgPath;
     // Start is called before the first frame update
     void Start()
     {
         BlockCreation();
+        MosaicTileCreation();
         //ImageHandler p = new ImageHandler("Assets/Source/Image/sample_image.png");
         //Debug.Log("Hello", "test");
         Texture2D texture = null;
@@ -149,6 +154,25 @@ public class CropImage : MonoBehaviour
                 //tempGameObject.transform.position += new Vector3((float)i, (float)j, 0);
 
                 GameObjectMosaicDictionaty.Add(countBlocks++,tempGameObject);
+                ;
+            }
+        }
+    }
+    public void MosaicTileCreation()
+    {
+        MosaicTileDictionaty = new Dictionary<int, GameObject>(verticalBlockCount * gorizontalBlockCount);
+        GameObject tempGameObject;
+        int countBlocks = 0;
+        for (int y = 0; y < verticalBlockCount; y++)
+        {
+            for (int x = 14; x < gorizontalBlockCount + 14; x++)
+            {
+
+                tempGameObject = Instantiate(pointerURL_MosaicTile, new Vector3(x, y, 0), Quaternion.identity);
+                //tempGameObject.GetComponent<Renderer>().material.color = Color.white;
+                //tempGameObject.transform.position += new Vector3((float)i, (float)j, 0);
+
+                MosaicTileDictionaty.Add(countBlocks++, tempGameObject);
                 ;
             }
         }

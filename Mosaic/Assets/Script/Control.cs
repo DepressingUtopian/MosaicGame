@@ -8,6 +8,7 @@ public class Control : MonoBehaviour
     private bool isSelected = false;
     private bool moveFlag = false;
     private bool isDragging = false;
+    private bool TilePlate = false;
     private Vector3 posVec;
     private RaycastHit vision;
     private Shader defaultShader;
@@ -23,8 +24,8 @@ public class Control : MonoBehaviour
 
         if (moveFlag)
         {
-
-            transform.position = Vector3.MoveTowards(transform.position, posVec, Time.deltaTime);
+            transform.position = posVec;
+            //transform.position = Vector3.MoveTowards(transform.position, posVec, Time.deltaTime);
         }
 
         if(!isDragging && isSelected && !moveFlag)
@@ -41,8 +42,10 @@ public class Control : MonoBehaviour
         {
             // Меняем местами положение цилиндра.
             moveFlag = false;
-           
-           // transform.position *= -1.0f;
+            TilePlate = true;
+            defaultTransformPosition = this.transform.position;
+            //this.GetComponent<Rigidbody>().detectCollisions = true;
+            // transform.position *= -1.0f;
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -51,22 +54,38 @@ public class Control : MonoBehaviour
             if (isSelected)
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out vision, 100.0f))
                 {
+                    if (vision.collider.tag == "mosaicBlock" && TilePlate)
+                    {
+                        this.transform.position = defaultTransformPosition;
+                    }
+                        Debug.Log("CLICK BLOCK");
                     if (vision.collider.tag == "mosaicTile")
                     {
                         posVec = vision.transform.position;
-                        posVec.z = defaultTransformPosition.z;
+                        if (!TilePlate)
+                            posVec.z = defaultTransformPosition.z - 2 * vision.transform.localScale.z;
+                        else
+                            posVec.z = defaultTransformPosition.z;
                         moveFlag = true;
+                        isSelected = false;
+                        this.GetComponent<Renderer>().material.shader = defaultShader;
                     }
-                        
+
+                    
+
                     if (vision.collider.tag == "mosaicBlock" && vision.transform.position != this.transform.position)
                     {
                         isSelected = false;
                         isDragging = false;
                         this.GetComponent<Renderer>().material.shader = defaultShader;
-                        this.transform.position = defaultTransformPosition;
-                     
+                        if (!TilePlate)
+                            this.transform.position = defaultTransformPosition;
+
+                        //  if (TilePlate)
+                        // this.transform.position = defaultTransformPosition;
+
                         Debug.Log(defaultTransformPosition);
-                        Debug.Log("Default");
+                       
 
 
                     }
@@ -84,6 +103,7 @@ public class Control : MonoBehaviour
             if (draggingObject != null)
             {
                 draggingObject.GetComponent<Rigidbody>().isKinematic = false;
+               // draggingObject.GetComponent<Rigidbody>().detectCollisions = false;
             }
             isDragging = false;
         }
@@ -107,9 +127,15 @@ public class Control : MonoBehaviour
     {
         if (draggingObject != null && isSelected && !moveFlag)
         {
-           //this.transform.position = new Vector3() { x = this.transform.position.x, y = this.transform.position.y, z = -2.0f };
+            //this.transform.position = new Vector3() { x = this.transform.position.x, y = this.transform.position.y, z = -2.0f };
+           // draggingObject.GetComponent<Rigidbody>().detectCollisions = true;
             draggingObject.GetComponent<Rigidbody>().MovePosition(CalculateMouse3DVector());
         }
+    }
+    private void OnMouseUp()
+    {
+        if(!isDragging)
+            
     }
 }
 
