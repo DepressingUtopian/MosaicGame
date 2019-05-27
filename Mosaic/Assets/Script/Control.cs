@@ -21,7 +21,7 @@ public class Control : MonoBehaviour
 
     void Update()
     {
-
+       
         if (moveFlag)
         {
             transform.position = posVec;
@@ -51,7 +51,7 @@ public class Control : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
            
-            if (isSelected)
+            if (isSelected && !isDragging)
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out vision, 100.0f))
                 {
                     if (vision.collider.tag == "mosaicBlock" && TilePlate)
@@ -112,14 +112,14 @@ public class Control : MonoBehaviour
     private Vector3 CalculateMouse3DVector()
     {
         Vector3 v3 = Input.mousePosition;
-        v3.z = 8f;
+        v3.z = 5f;
         v3 = Camera.main.ScreenToWorldPoint(v3);
         Debug.Log(v3); //Current Position of mouse in world space
         return v3;
     }
     private void OnMouseDown()
     {
-        Debug.Log("MOSAIC TOUCH");
+       
         this.GetComponent<Renderer>().material.shader = Shader.Find("Custom/OutlineObjects");
         isSelected = true;
     }
@@ -134,8 +134,31 @@ public class Control : MonoBehaviour
     }
     private void OnMouseUp()
     {
-        if(!isDragging)
-            
+        RaycastHit[] hits;
+        int layerMask = ~(1 << 9);
+
+        Debug.DrawRay(this.transform.position, transform.TransformDirection(Vector3.forward) * 4.0f, Color.yellow, 2f);
+
+        hits = Physics.RaycastAll(this.transform.position, transform.TransformDirection(Vector3.forward) * 4.0f, 4f);
+
+        if(hits.Length == 1)
+        {
+               
+                if (hits[0].collider.tag == "mosaicTile")
+                {
+                    posVec = hits[0].transform.position;
+                    if (!TilePlate)
+                        posVec.z = defaultTransformPosition.z -  vision.transform.localScale.z;
+                    else
+                        posVec.z = defaultTransformPosition.z;
+                    TilePlate = true;
+                    isSelected = false;
+                    this.transform.position = posVec;
+                    this.GetComponent<Renderer>().material.shader = defaultShader;
+            }
+        }
+        isDragging = false;
+
     }
 }
 

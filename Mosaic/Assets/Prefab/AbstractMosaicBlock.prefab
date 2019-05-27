@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3087791884258182292}
   - component: {fileID: -2369437991033505192}
   - component: {fileID: 618818093441775134}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: AbstractMosaicBlock
   m_TagString: mosaicBlock
   m_Icon: {fileID: 0}

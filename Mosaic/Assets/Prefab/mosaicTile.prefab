@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8305871217015195486}
   - component: {fileID: 8305871217015195485}
   - component: {fileID: 8305871217015195484}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: mosaicTile
   m_TagString: mosaicTile
   m_Icon: {fileID: 0}
