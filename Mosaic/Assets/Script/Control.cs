@@ -51,7 +51,7 @@ public class Control : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
            
-            if (isSelected && !isDragging)
+            if (isSelected)
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out vision, 100.0f))
                 {
                     if (vision.collider.tag == "mosaicBlock" && TilePlate)
@@ -135,7 +135,7 @@ public class Control : MonoBehaviour
     private void OnMouseUp()
     {
         RaycastHit[] hits;
-        int layerMask = ~(1 << 9);
+       // int layerMask = ~(1 << 9);
 
         Debug.DrawRay(this.transform.position, transform.TransformDirection(Vector3.forward) * 4.0f, Color.yellow, 2f);
 
@@ -157,8 +157,8 @@ public class Control : MonoBehaviour
                     this.GetComponent<Renderer>().material.shader = defaultShader;
             }
         }
-        isDragging = false;
-
+        
+            
     }
 }
 

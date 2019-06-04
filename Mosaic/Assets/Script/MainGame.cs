@@ -16,6 +16,7 @@ public class MainGame : MonoBehaviour
     {
         BlockCreation();
         MosaicTileCreation();
+
     }
 
     // Update is called once per frame
@@ -24,7 +25,7 @@ public class MainGame : MonoBehaviour
         
     }
 
-    public void BlockCreation()
+    private void BlockCreation()
     {
         GameObjectMosaicDictionaty = new Dictionary<int, GameObject>(verticalBlockCount * gorizontalBlockCount);
         GameObject tempGameObject;
@@ -35,6 +36,7 @@ public class MainGame : MonoBehaviour
             {
 
                 tempGameObject = Instantiate(pointerURL_GameObject, new Vector3(x, y, 0), Quaternion.identity);
+                tempGameObject.name = "block" + countBlocks;
                 //tempGameObject.GetComponent<Renderer>().material.color = Color.white;
                 //tempGameObject.transform.position += new Vector3((float)i, (float)j, 0);
 
@@ -54,11 +56,11 @@ public class MainGame : MonoBehaviour
             {
 
                 tempGameObject = Instantiate(pointerURL_MosaicTile, new Vector3(x, y, 0), Quaternion.identity);
-                //tempGameObject.GetComponent<Renderer>().material.color = Color.white;
+                tempGameObject.GetComponent<Renderer>().material.color = Color.white;
                 //tempGameObject.transform.position += new Vector3((float)i, (float)j, 0);
 
                 MosaicTileDictionaty.Add(countBlocks++, tempGameObject);
-                ;
+
             }
         }
     }

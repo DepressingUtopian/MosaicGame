@@ -8,7 +8,11 @@ public class CropImage : MonoBehaviour
 {
     public GameObject pointerURL_GameObject;
     public GameObject pointerURL_MosaicTile;
+    public string pathTextureMask;
+    PuzzleGenerator generator;
 
+    public GameObject[] pointerMosaicPrefabs;
+    private Color[] ColorMask;
     private GameObject []mosaicBlocks;
 
     private float mosaicHeight = 0;
@@ -21,10 +25,12 @@ public class CropImage : MonoBehaviour
     private Dictionary<int, GameObject> MosaicTileDictionaty;
 
     public string imgPath;
+
     // Start is called before the first frame update
     void Start()
     {
         BlockCreation();
+       // CreateBitMask();
         MosaicTileCreation();
         //ImageHandler p = new ImageHandler("Assets/Source/Image/sample_image.png");
         //Debug.Log("Hello", "test");
@@ -75,7 +81,7 @@ public class CropImage : MonoBehaviour
                         cut_texture.Apply();
                         block.gameObject.GetComponent<Renderer>().material.color = Color.white;
                        // block.GetComponent<Renderer>().material.color = Color.white;
-                        block.GetComponent<Renderer>().transform.Rotate(0,0,180, Space.Self);
+                        
                         block.GetComponent<Renderer>().material.mainTexture = cut_texture;
                         
 
@@ -105,25 +111,31 @@ public class CropImage : MonoBehaviour
         try
         {
             if (gorizontalBlockCount > verticalBlockCount)
-                    if (texture.width > texture.height)
-                    {
-                        resizeKoef = (texture.width / gorizontalBlockCount - texture.height / verticalBlockCount) * verticalBlockCount;
-                        newIMG_Height = texture.height + resizeKoef;
-                        newIMG_Width = texture.width;
-                    }
-                    else if (texture.width < texture.height)
-                    {
-                        resizeKoef = (texture.height / verticalBlockCount - texture.width / gorizontalBlockCount) * gorizontalBlockCount;
-                        newIMG_Width = texture.width + resizeKoef;
-                        newIMG_Height = texture.height;
-                    }
-                    else if (texture.width == texture.height)
-                    {
-
-                        resizeKoef = (texture.height / verticalBlockCount - texture.width / gorizontalBlockCount) * gorizontalBlockCount;
-                        newIMG_Width = texture.width + resizeKoef;
-                        newIMG_Height = texture.height;
+            {
+                if (texture.width > texture.height)
+                {
+                    resizeKoef = (texture.width / gorizontalBlockCount - texture.height / verticalBlockCount) * verticalBlockCount;
+                    newIMG_Height = texture.height + resizeKoef;
+                    newIMG_Width = texture.width;
                 }
+                else if (texture.width < texture.height)
+                {
+                    resizeKoef = (texture.height / verticalBlockCount - texture.width / gorizontalBlockCount) * gorizontalBlockCount;
+                    newIMG_Width = texture.width + resizeKoef;
+                    newIMG_Height = texture.height;
+                }
+                else if (texture.width == texture.height)
+                {
+
+                    resizeKoef = (texture.height / verticalBlockCount - texture.width / gorizontalBlockCount) * gorizontalBlockCount;
+                    newIMG_Width = texture.width + resizeKoef;
+                    newIMG_Height = texture.height;
+                }
+            }
+            else if (gorizontalBlockCount < verticalBlockCount)
+            {
+
+            }
                
         }
         catch (System.Exception e)
@@ -142,22 +154,46 @@ public class CropImage : MonoBehaviour
     {
         GameObjectMosaicDictionaty = new Dictionary<int, GameObject>(verticalBlockCount * gorizontalBlockCount);
         GameObject tempGameObject;
+        GameObject currentBlock = new GameObject();
+        string blockG = "";
         int countBlocks = 0;
+        Vector3 rotate = new Vector3();
+        generator = new PuzzleGenerator(verticalBlockCount, gorizontalBlockCount);
         for (int y = 0; y < verticalBlockCount; y++)
             {
-            for (int x = 0; x < gorizontalBlockCount; x++)
-            {
+               
+                for (int x = 0; x < gorizontalBlockCount; x++)
+                {
 
-                tempGameObject = Instantiate(pointerURL_GameObject, new Vector3(x, y, 0), Quaternion.identity);
-                tempGameObject.name = "block" + countBlocks;
+                    for (int k = 0; k < pointerMosaicPrefabs.Length; k++)
+                    {
+                        currentBlock = null;
+                        if (generator.GetInstantiateBlockJigsawPuzzle(x, y, pointerMosaicPrefabs[k], ref rotate))
+                            {
+                               currentBlock = pointerMosaicPrefabs[k];
+                               blockG = generator.mosaicDivision[x, y];
+                               break;
+                            
+                            }
+                    }
+
+                if (currentBlock == null)
+                {
+                    Debug.Log(blockG);
+                    continue;
+                }
+                    tempGameObject = Instantiate(currentBlock, new Vector3(x, y, 0), Quaternion.Euler(rotate));
+
+                    tempGameObject.name = currentBlock.name + " -> " + blockG + "x: " + rotate.x + "y: "+ rotate.y + "z:" + rotate.z;
+                   // tempGameObject.transform.localScale = new Vector3(4.0f, 0.0f, 4.0f);
                 //tempGameObject.GetComponent<Renderer>().material.color = Color.white;
                 //tempGameObject.transform.position += new Vector3((float)i, (float)j, 0);
-
-                GameObjectMosaicDictionaty.Add(countBlocks++,tempGameObject);
-                ;
+                // Vector3 temp = Quaternion.Euler(rotate).ToEulerAngles();
+                GameObjectMosaicDictionaty.Add(countBlocks++, tempGameObject);
+                }
             }
-        }
-    }
+       }
+    
     public void MosaicTileCreation()
     {
         MosaicTileDictionaty = new Dictionary<int, GameObject>(verticalBlockCount * gorizontalBlockCount);
@@ -169,6 +205,7 @@ public class CropImage : MonoBehaviour
             {
 
                 tempGameObject = Instantiate(pointerURL_MosaicTile, new Vector3(x, y, 0), Quaternion.identity);
+              
                 //tempGameObject.GetComponent<Renderer>().material.color = Color.white;
                 //tempGameObject.transform.position += new Vector3((float)i, (float)j, 0);
 
@@ -182,15 +219,29 @@ public class CropImage : MonoBehaviour
     {
 
     }
-
-    public class ImageHandler
+    /*
+    public void CreateBitMask()
     {
-        
-        public ImageHandler(string imgPath)
+        Texture2D texture = null;
+        byte[] BitMap;
+
+        if (File.Exists(pathTextureMask))
         {
-            
+            BitMap = File.ReadAllBytes(pathTextureMask);
+            texture = new Texture2D(2, 2, TextureFormat.ARGB32, false);
+            texture.LoadImage(BitMap);
+            Color[] c;
+            c = texture.GetPixels(0, 0, texture.width, texture.height);
+
+                for (int j = 0; j < c.Length; j++)
+                {
+                  
+                    Debug.Log(c[j].r + " " + c[j].g + " " + c[j].b);
+
+                }
         }
     }
+    */
 }
 
 
