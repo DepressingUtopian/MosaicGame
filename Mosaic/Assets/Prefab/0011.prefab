@@ -25,14 +25,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 694459452842548999}
-  m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: -0.5}
+  m_LocalRotation: {x: -0.5, y: 0.5, z: -0.5, w: 0.5}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4430997732564076296}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 180, y: 90, z: -90}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: -90}
 --- !u!114 &5380344401473831759
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -172,7 +172,7 @@ GameObject:
   - component: {fileID: 8951637916247390420}
   - component: {fileID: 6138486104418170203}
   m_Layer: 9
-  m_Name: Puzzle.021_Puzzle.021_GoldenEggMaterial
+  m_Name: entity
   m_TagString: mosaicBlock
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -201,7 +201,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 542418670855942666}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2273133832023442865}
-  m_Mesh: {fileID: -7597731213165286170, guid: 9349b0d264d7a6941b5d3162a24a3d8d, type: 3}
+  m_Mesh: {fileID: -2432090755550338912, guid: 9a55ae2644af2e243a5243c1f1e80295, type: 3}
 --- !u!23 &4783056133773761336
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -220,7 +220,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 6698540498101371666, guid: 9349b0d264d7a6941b5d3162a24a3d8d, type: 3}
+  - {fileID: 2100000, guid: 5d0c77edb7b439a458577651cbf4cc29, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -368,6 +368,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_TagString
       value: mosaicBlock
+      objectReference: {fileID: 0}
+    - target: {fileID: 1732977408598243259, guid: 263a4c405f065a14b8ec3c82bc97e1c3,
+        type: 3}
+      propertyPath: m_Name
+      value: entity
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 0}

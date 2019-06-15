@@ -9,9 +9,6 @@ public class PuzzleGenerator : MonoBehaviour
 {
     public int height_grid = 0;
     public int width_grid = 0;
-    private string[] CornerBlocks = {"2200","1100","2100","1200"};
-    private string[] SideBlocks = { "2101","1202", "1011", "2220", "2201", "2210", "2011", "0211" };
-    private string[] CenterBlocks = { "2222","1111","1221","1222","1121" };
     public  string[,] mosaicDivision;
     enum formBlocks { Corner,Side,Center};
     // Start is called before the first frame update
@@ -22,81 +19,18 @@ public class PuzzleGenerator : MonoBehaviour
         mosaicDivision = new string[width_grid,height_grid ];
         DivisionProcess();
     }
-    void Start()
-    {
-       // mosaicDivision = new string[height_grid, width_grid];
-
-       // DivisionProcess();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     private void DivisionProcess()
     {
-        string direction;
         for (int y = 0; y < height_grid; y++)
         {
             for (int x = 0; x < width_grid; x++)
-            {
-               
-             mosaicDivision[x, y] = GetMosaicDirection(x, y);
-                
-             // Debug.LogFormat("i: {0} j: {1} value: {2}", x, y, mosaicDivision[x, y]);
-                //Debug.Log("i: {0} j: {1} value: {2}",i,j, mosaicDivision[i, j]);
-
+            {             
+             mosaicDivision[x, y] = GetMosaicDirection(x, y);              
             }
         }
-    }
-    private string GetMosaicPlate(int x, int y)
-    {
-        string PlateCode = "";
-        if ((x == 0 && y == 0) || (x == 0 && y == height_grid) || (x == width_grid && y == 0) || (x == width_grid && y == height_grid))
-        {
-            GenСombinations(ref PlateCode, (0100), formBlocks.Corner);
-        }
-        else if (x == 0 || y == 0)
-        {
-            GenСombinations(ref PlateCode, (0100), formBlocks.Side);
-        }
-        else
-        {
-            GenСombinations(ref PlateCode, (0100), formBlocks.Center);
-        }
-        return PlateCode;
-    }
-    private void GenСombinations(ref string _PlateCode,byte direction, formBlocks _form)
-    {
-        Random rand = new Random();
-     
-        switch (_form)
-        {
-            case formBlocks.Corner:
-            {
-              string temp = CornerBlocks[Random.Range(0,CornerBlocks.Length - 1)];
-              _PlateCode = temp;
-              break;
-            }
-            case formBlocks.Side:
-            {
-                    string temp = SideBlocks[Random.Range(0, CornerBlocks.Length - 1)];
-                    _PlateCode = temp;
-                    break;
-            }
-            case formBlocks.Center:
-            {
-               string temp = CenterBlocks[Random.Range(0, CornerBlocks.Length - 1)];
-               _PlateCode = temp;
-               break;
-            }
-
-        }
-    }
+    }    
     private string GetMosaicDirection(int x , int y)
     {
-       //char[] BlockSeq = new char[4];
         int[] BlockSeq = new int[4];
         if (x == 0)
         {
@@ -187,11 +121,7 @@ public class PuzzleGenerator : MonoBehaviour
 
         if(!mosaicDivision[x, y].Equals(orig_nameBlock))
             return false;
-        /* if (new_rotate.z >= 360.0f)
-             new_rotate.z -= 360.0f;
-         if (new_rotate.z <= -360.0f)
-             new_rotate.z += 360.0f;*/
-        //new_rotate = new_rotate.x * Vector3.forward;
+
         return true;
     }
     private void linePitch(ref string str)
