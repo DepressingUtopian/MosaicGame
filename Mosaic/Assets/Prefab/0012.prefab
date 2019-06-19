@@ -66,6 +66,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   draggingObject: {fileID: 1931549705311133868}
+  blockID: 0
 --- !u!54 &7631694418791827945
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -108,6 +109,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   draggingObject: {fileID: 3061271608119857633}
+  blockID: 0
 --- !u!1 &7030420848560091001
 GameObject:
   m_ObjectHideFlags: 0
@@ -304,9 +306,19 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: f8b619eb74f200042823f9925c6996a7,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 4
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: f8b619eb74f200042823f9925c6996a7,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1563686523265411368, guid: f8b619eb74f200042823f9925c6996a7,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: -1563686523265411368, guid: f8b619eb74f200042823f9925c6996a7,
         type: 3}
       propertyPath: m_LocalScale.z
       value: 4

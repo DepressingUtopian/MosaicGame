@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6546031621678591072}
   - component: {fileID: 5380344401473831759}
   - component: {fileID: -3031460717572431135}
+  - component: {fileID: 6576987531622636176}
   m_Layer: 9
   m_Name: 0011
   m_TagString: mosaicBlock
@@ -84,6 +85,22 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!54 &6576987531622636176
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 694459452842548999}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &803128574593594651
 GameObject:
   m_ObjectHideFlags: 0
@@ -112,7 +129,7 @@ Transform:
   m_GameObject: {fileID: 803128574593594651}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4, y: 1, z: 4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7021414213974847962}
   m_Father: {fileID: 6546031621678591072}
@@ -188,7 +205,7 @@ Transform:
   m_GameObject: {fileID: 2273133832023442865}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 4, y: 1, z: 4}
   m_Children: []
   m_Father: {fileID: 4430997732564076296}
   m_RootOrder: 0
@@ -281,7 +298,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f750c887c8054d4d94d4f03b87ca699, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  draggingObject: {fileID: 2273133832023442865}
+  draggingObject: {fileID: 694459452842548999}
+  blockID: 0
 --- !u!1001 &542418670855942666
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -344,6 +362,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4249460839106704642, guid: 263a4c405f065a14b8ec3c82bc97e1c3,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4249460839106704642, guid: 263a4c405f065a14b8ec3c82bc97e1c3,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 910368993472513809, guid: 263a4c405f065a14b8ec3c82bc97e1c3,
         type: 3}
       propertyPath: m_Name
@@ -358,6 +386,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_TagString
       value: mosaicBlock
+      objectReference: {fileID: 0}
+    - target: {fileID: 7419150346581246928, guid: 263a4c405f065a14b8ec3c82bc97e1c3,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7419150346581246928, guid: 263a4c405f065a14b8ec3c82bc97e1c3,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1732977408598243259, guid: 263a4c405f065a14b8ec3c82bc97e1c3,
         type: 3}

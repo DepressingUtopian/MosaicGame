@@ -6,40 +6,45 @@ using System.IO;
 
 public class CropImage : MonoBehaviour
 {
-    public GameObject pointerURL_GameObject;
+    public GameObject pointerURL_GameObject = null;
     public GameObject pointerURL_MosaicTile;
-    public string pathTextureMask;
+
     PuzzleGenerator generator;
 
     public GameObject[] pointerMosaicPrefabs;
-    private Color[] ColorMask;
     private GameObject []mosaicBlocks;
+
+    public GameObject Backplate;
 
     private float mosaicHeight = 0;
     private float mosaicWidth = 0;
 
-    public int verticalBlockCount = 8;
-    public int gorizontalBlockCount = 10;
-    struct MosaicTile
-    {
-        public GameObject obj;
-        public Vector3 vector3rotate;
-    }
-    private Dictionary<int, MosaicTile> GameObjectMosaicDictionaty;
-    private Dictionary<int, GameObject> MosaicTileDictionaty;
+    static public int verticalBlockCount = 2;
+    static public int gorizontalBlockCount = 2;
 
-    public string imgPath;
+    private float scaleX = 1.0f;
+    private float scaleZ = 1.0f;
+    public float scalePower = 0.6f;
+    static public string imgPath = "Assets/Source/Image/Créations_Artstation_2017_15.jpg";
 
     // Start is called before the first frame update
     void Start()
     {
+        runCropProcess();
+    }
+    public void runCropProcess()
+    {
+        computeScale(scalePower);
         BlockCreation();
-       // CreateBitMask();
         MosaicTileCreation();
-        //ImageHandler p = new ImageHandler("Assets/Source/Image/sample_image.png");
-        //Debug.Log("Hello", "test");
+        Cropping();
+    }
+    private void Cropping()
+    {
+        GameEvents.initCollected(verticalBlockCount * gorizontalBlockCount);
+
         Texture2D texture = null;
-        
+
         byte[] imgData;
 
         if (File.Exists(imgPath))
@@ -54,27 +59,23 @@ public class CropImage : MonoBehaviour
             mosaicHeight = texture.height;
             mosaicWidth = texture.width;
 
-                mosaicBlocks = GameObject.FindGameObjectsWithTag("mosaicBlock");
+            mosaicBlocks = GameObject.FindGameObjectsWithTag("mosaicBlock");
 
             if (mosaicBlocks != null)
             {
-               // float cutHeight = mosaicHeight / verticalBlockCount;
-               // float cutWidth = mosaicWidth / gorizontalBlockCount;
 
-                int deltaX_old = (int) mosaicHeight / verticalBlockCount;
+                int deltaX_old = (int)mosaicHeight / verticalBlockCount;
                 int deltaY_old = (int)mosaicWidth / gorizontalBlockCount;
                 int deltaX_new = 0;
                 int deltaY_new = 0;
                 int projection_size_x = (int)(deltaX_old * 0.25);
                 int projection_size_y = (int)(deltaY_old * 0.25);
-                int x = 0;
-                int y = 0;
-                int i = 0;
-                int j = 0;
+                int x = 0, y = 0, i = 0, j = 0;
+
                 string mosaic_code;
                 Component[] hingeJoints;
-                Debug.LogFormat("h = {0}, w = {1}",mosaicHeight,mosaicWidth);
-                foreach (MosaicTile block in GameObjectMosaicDictionaty.Values)
+                Debug.LogFormat("h = {0}, w = {1}", mosaicHeight, mosaicWidth);
+                foreach (GameEvents.MosaicTile block in GameEvents.GameObjectMosaicDictionaty.Values)
                 {
 
                     deltaX_new = deltaX_old;
@@ -88,29 +89,23 @@ public class CropImage : MonoBehaviour
                         j++;
                     }
 
-                    if (j == verticalBlockCount)
-                        return;
-
-
-
-                    if (mosaic_code[0] == '2') 
+                    if (mosaic_code[0] == '2')
                         deltaY_new += projection_size_y;
-                    if(mosaic_code[2] == '2')
+                    if (mosaic_code[2] == '2')
                         deltaY_new += projection_size_y;
                     if (mosaic_code[1] == '2')
                         deltaX_new += projection_size_x;
-                    if(mosaic_code[3] == '2')
+                    if (mosaic_code[3] == '2')
                         deltaX_new += projection_size_x;
 
-                  
-                    Debug.LogFormat("x = {0}, y = {1} , dX = {2} , dY = {3}, code = {4}",x,y,deltaX_new,deltaY_new,mosaic_code);
+                    Debug.LogFormat("x = {0}, y = {1} , dX = {2} , dY = {3}, code = {4}", x, y, deltaX_new, deltaY_new, mosaic_code);
                     Texture2D cut_texture = new Texture2D(deltaX_new, deltaY_new, TextureFormat.ARGB32, false);
-                    if (y + deltaY_new >= mosaicHeight)
+                    if (y >= mosaicHeight)
                     {
                         y = 0;
                         break;
                     }
-                  
+
                     else
                     {
                         int new_x = x;
@@ -125,15 +120,14 @@ public class CropImage : MonoBehaviour
                         Color[] c = texture.GetPixels(new_x, new_y, deltaX_new, deltaY_new);
                         float angle = 0.0f;
                         cut_texture.SetPixels(c);
-                       // cut_texture.ro
                         cut_texture.Apply();
                         block.obj.gameObject.GetComponent<Renderer>().material.color = Color.black;
-                        // block.GetComponent<Renderer>().material.color = Color.white;
+
                         hingeJoints = block.obj.GetComponentsInChildren<Renderer>();
                         foreach (Renderer joint in hingeJoints)
                         {
                             joint.material.mainTexture = cut_texture;
-                           angle = block.vector3rotate.x;
+                            angle = block.vector3rotate.x;
                             if (angle >= 90.0f)
                                 angle -= 90.0f;
                             else
@@ -145,28 +139,25 @@ public class CropImage : MonoBehaviour
 
                             joint.material.SetFloat("_RotationAngle", angle);
                         }
-                        
-                        //GO.GetComponentInChildren<Renderer>().material.mainTexture = cut_texture;
-
-
 
                     }
-                        //block.transform.localScale += new Vector3((float) (deltaX * 0.01),(float) (deltaY * 0.01), 0);
-                        //block.transform.position += new Vector3((float)(x * 0.01), (float)(y * 0.01), 0);
-                    if (x  >= mosaicWidth - deltaX_old)
+
+                    if (x >= mosaicWidth - deltaX_old)
                     {
                         x = 0;
                         y += deltaY_old;
                     }
                     else
                         x += deltaX_old;
+
+                    if (j == verticalBlockCount)
+                        return;
                 }
-                
+
             }
 
         }
     }
-
     private void ResizeTexture(ref Texture2D texture)
     {
         int newIMG_Height = 0;
@@ -174,13 +165,20 @@ public class CropImage : MonoBehaviour
         int resizeKoef = 0; //Показатель на сколько изображение будет смещаться относительно  размера текстуры
         try
         {
-            if (gorizontalBlockCount > verticalBlockCount)
-            {
+            
                 if (texture.width > texture.height)
                 {
-                    resizeKoef = (texture.width / gorizontalBlockCount - texture.height / verticalBlockCount) * verticalBlockCount;
-                    newIMG_Height = texture.height + resizeKoef;
-                    newIMG_Width = texture.width;
+                    if ((resizeKoef = (texture.width / gorizontalBlockCount - texture.height / verticalBlockCount)) > 0)
+                    {
+                        newIMG_Height = texture.height + resizeKoef * verticalBlockCount;
+                        newIMG_Width = texture.width;
+                    }
+                    else
+                    {
+                        resizeKoef *= -1;
+                        newIMG_Width = texture.width + resizeKoef * gorizontalBlockCount;
+                        newIMG_Height = texture.height;
+                    }
                 }
                 else if (texture.width < texture.height)
                 {
@@ -195,11 +193,9 @@ public class CropImage : MonoBehaviour
                     newIMG_Width = texture.width + resizeKoef;
                     newIMG_Height = texture.height;
                 }
-            }
-            else if (gorizontalBlockCount < verticalBlockCount)
-            {
+               
 
-            }
+            
                
         }
         catch (System.Exception e)
@@ -209,15 +205,17 @@ public class CropImage : MonoBehaviour
 
         Texture2D new_texture = new Texture2D(newIMG_Width, newIMG_Height, TextureFormat.ARGB32, false);
         Color[] c = texture.GetPixels(0, 0, texture.width, texture.height);
-        print((newIMG_Height - texture.height) / 2);
+        Debug.LogFormat(" x  - {0} ,y  - {1}", (newIMG_Width - texture.width) / 2, (newIMG_Height - texture.height) / 2);
+
+     
         new_texture.SetPixels((newIMG_Width - texture.width) / 2, (newIMG_Height - texture.height) / 2, texture.width, texture.height, c,0);
 
         texture = new_texture;
     }
     private void BlockCreation()
     {
-        GameObjectMosaicDictionaty = new Dictionary<int, MosaicTile>(verticalBlockCount * gorizontalBlockCount);
-        MosaicTile tempMosaicTile;
+        GameEvents.GameObjectMosaicDictionaty = new Dictionary<int, GameEvents.MosaicTile>(verticalBlockCount * gorizontalBlockCount);
+        GameEvents.MosaicTile tempMosaicBlock;
         GameObject currentBlock = new GameObject();
         string blockG = "";
         int countBlocks = 0;
@@ -246,67 +244,55 @@ public class CropImage : MonoBehaviour
                     Debug.Log(blockG);
                     continue;
                 }
-                    tempMosaicTile.obj = Instantiate(currentBlock, new Vector3(x, y, 0), Quaternion.Euler(rotate));
 
-                tempMosaicTile.obj.name = currentBlock.name + " -> " + blockG + "x: " + rotate.x + "y: "+ rotate.y + "z:" + rotate.z;
-                tempMosaicTile.vector3rotate = rotate;
-                   // tempGameObject.transform.localScale = new Vector3(4.0f, 0.0f, 4.0f);
-                //tempGameObject.GetComponent<Renderer>().material.color = Color.white;
-                //tempGameObject.transform.position += new Vector3((float)i, (float)j, 0);
-                // Vector3 temp = Quaternion.Euler(rotate).ToEulerAngles();
-                GameObjectMosaicDictionaty.Add(countBlocks++, tempMosaicTile);
+                // tempMosaicBlock.obj = Instantiate(currentBlock, new Vector3(Random.Range(0 - Backplate.transform.localScale.x / 2 * 0.70f, Backplate.transform.localScale.x / 2 * 0.70f), Random.Range(0 - Backplate.transform.localScale.y / 2 * 0.70f, Backplate.transform.localScale.y / 2 * 0.70f), 0.06f), Quaternion.Euler(rotate));
+                tempMosaicBlock.obj = Instantiate(currentBlock,new Vector3( x, y, 0.06f), Quaternion.Euler(rotate));
+
+                tempMosaicBlock.obj.name = countBlocks.ToString();
+               // tempMosaicBlock.obj.transform.root.transform.localScale = new Vector3 { x = scaleX, y = 1.0f, z = scaleZ };
+                tempMosaicBlock.vector3rotate = rotate;
+                tempMosaicBlock.blockID = x + y * gorizontalBlockCount;
+
+                GameEvents.GameObjectMosaicDictionaty.Add(countBlocks++, tempMosaicBlock);
                 }
             }
        }
     
     public void MosaicTileCreation()
     {
-        MosaicTileDictionaty = new Dictionary<int, GameObject>(verticalBlockCount * gorizontalBlockCount);
+        GameEvents.MosaicTileDictionaty = new Dictionary<int, GameObject>(verticalBlockCount * gorizontalBlockCount);
         GameObject tempGameObject;
         int countBlocks = 0;
-        for (int y = 0; y < verticalBlockCount; y++)
+        for (float y = 0 - verticalBlockCount / 2; y < verticalBlockCount / 2; y++)
         {
-            for (int x = 14; x < gorizontalBlockCount + 14; x++)
+            for (float x = 0 - gorizontalBlockCount / 2; x < gorizontalBlockCount / 2; x++)
             {
 
-                tempGameObject = Instantiate(pointerURL_MosaicTile, new Vector3(x, y, 0), Quaternion.identity);
-              
+                tempGameObject = Instantiate(pointerURL_MosaicTile, new Vector3(x * scaleX, y * scaleZ, 0.1f), Quaternion.identity);
+                tempGameObject.transform.root.transform.localScale = new Vector3 { x = scaleX, y = scaleZ, z = 0.01f };
                 //tempGameObject.GetComponent<Renderer>().material.color = Color.white;
                 //tempGameObject.transform.position += new Vector3((float)i, (float)j, 0);
+                tempGameObject.name = countBlocks.ToString();
+               
+                GameEvents.MosaicTileDictionaty.Add(countBlocks++, tempGameObject);
+                
 
-                MosaicTileDictionaty.Add(countBlocks++, tempGameObject);
-                ;
             }
         }
+    }
+    public void computeScale(float scale_power)
+    {
+        float koef = Mathf.Max(gorizontalBlockCount,verticalBlockCount);
+        float koef2 = Mathf.Min(Backplate.transform.localScale.x, Backplate.transform.localScale.y);
+            scaleX = (koef2 * scale_power) / koef;
+            scaleZ = scaleX;
     }
     // Update is called once per frame
     void Update()
     {
 
     }
-    /*
-    public void CreateBitMask()
-    {
-        Texture2D texture = null;
-        byte[] BitMap;
-
-        if (File.Exists(pathTextureMask))
-        {
-            BitMap = File.ReadAllBytes(pathTextureMask);
-            texture = new Texture2D(2, 2, TextureFormat.ARGB32, false);
-            texture.LoadImage(BitMap);
-            Color[] c;
-            c = texture.GetPixels(0, 0, texture.width, texture.height);
-
-                for (int j = 0; j < c.Length; j++)
-                {
-                  
-                    Debug.Log(c[j].r + " " + c[j].g + " " + c[j].b);
-
-                }
-        }
-    }
-    */
+    
 }
 
 

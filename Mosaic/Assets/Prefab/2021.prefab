@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 938899581128253154}
   - component: {fileID: 5645068788216817864}
   - component: {fileID: 6618436681460983539}
+  - component: {fileID: -9162159056666106170}
   m_Layer: 9
   m_Name: 2021
   m_TagString: mosaicBlock
@@ -84,6 +85,22 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!54 &-9162159056666106170
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3253273707945717821}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &5589538004635042327
 GameObject:
   m_ObjectHideFlags: 0
@@ -116,7 +133,7 @@ Transform:
   m_GameObject: {fileID: 5589538004635042327}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 4, y: 1, z: 4}
   m_Children: []
   m_Father: {fileID: 6539771150746396383}
   m_RootOrder: 0
@@ -180,7 +197,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f750c887c8054d4d94d4f03b87ca699, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  draggingObject: {fileID: 5589538004635042327}
+  draggingObject: {fileID: 3253273707945717821}
+  blockID: 0
 --- !u!65 &3213529825594360402
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -238,7 +256,7 @@ Transform:
   m_GameObject: {fileID: 7825768438227326156}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4, y: 1, z: 4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5990834260197109885}
   m_Father: {fileID: 938899581128253154}
@@ -343,6 +361,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7024439837844966072, guid: 8c07479d6c615384fb99a69b5946dc33,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7024439837844966072, guid: 8c07479d6c615384fb99a69b5946dc33,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7537202659020102682, guid: 8c07479d6c615384fb99a69b5946dc33,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7537202659020102682, guid: 8c07479d6c615384fb99a69b5946dc33,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6278170747824044203, guid: 8c07479d6c615384fb99a69b5946dc33,
         type: 3}

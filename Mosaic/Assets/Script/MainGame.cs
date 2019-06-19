@@ -57,7 +57,7 @@ public class MainGame : MonoBehaviour
 
                 tempGameObject = Instantiate(pointerURL_MosaicTile, new Vector3(x, y, 0), Quaternion.identity);
                 tempGameObject.GetComponent<Renderer>().material.color = Color.white;
-                //tempGameObject.transform.position += new Vector3((float)i, (float)j, 0);
+
 
                 MosaicTileDictionaty.Add(countBlocks++, tempGameObject);
 

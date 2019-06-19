@@ -7,10 +7,9 @@ using System.Linq;
 
 public class PuzzleGenerator : MonoBehaviour
 {
-    public int height_grid = 0;
-    public int width_grid = 0;
+    private int height_grid = 0;
+    private int width_grid = 0;
     public  string[,] mosaicDivision;
-    enum formBlocks { Corner,Side,Center};
     // Start is called before the first frame update
     public PuzzleGenerator(int height,int width)
     {
