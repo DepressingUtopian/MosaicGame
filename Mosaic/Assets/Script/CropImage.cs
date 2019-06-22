@@ -25,7 +25,11 @@ public class CropImage : MonoBehaviour
     private float scaleX = 1.0f;
     private float scaleZ = 1.0f;
     public float scalePower = 0.6f;
-    static public string imgPath = "Assets/Source/Image/Créations_Artstation_2017_15.jpg";
+    static public string imgPath;
+    static public bool isImageScale = true;
+    static public bool isMosaicСollected = false;
+    
+
 
     // Start is called before the first frame update
     void Start()
@@ -56,8 +60,8 @@ public class CropImage : MonoBehaviour
 
             ResizeTexture(ref texture);
 
-            mosaicHeight = texture.height;
-            mosaicWidth = texture.width;
+            mosaicHeight = (int)texture.height / verticalBlockCount * verticalBlockCount;
+            mosaicWidth = (int)texture.width / gorizontalBlockCount * gorizontalBlockCount;
 
             mosaicBlocks = GameObject.FindGameObjectsWithTag("mosaicBlock");
 
@@ -81,13 +85,7 @@ public class CropImage : MonoBehaviour
                     deltaX_new = deltaX_old;
                     deltaY_new = deltaY_old;
                     mosaic_code = generator.mosaicDivision[i, j];
-                    if (i < gorizontalBlockCount - 1)
-                        i++;
-                    else
-                    {
-                        i = 0;
-                        j++;
-                    }
+                   
 
                     if (mosaic_code[0] == '2')
                         deltaY_new += projection_size_y;
@@ -121,7 +119,7 @@ public class CropImage : MonoBehaviour
                         float angle = 0.0f;
                         cut_texture.SetPixels(c);
                         cut_texture.Apply();
-                        block.obj.gameObject.GetComponent<Renderer>().material.color = Color.black;
+                        block.obj.gameObject.GetComponent<Renderer>().material.color = Color.green;
 
                         hingeJoints = block.obj.GetComponentsInChildren<Renderer>();
                         foreach (Renderer joint in hingeJoints)
@@ -150,6 +148,13 @@ public class CropImage : MonoBehaviour
                     else
                         x += deltaX_old;
 
+                    if (i < gorizontalBlockCount - 1)
+                        i++;
+                    else
+                    {
+                        i = 0;
+                        j++;
+                    }
                     if (j == verticalBlockCount)
                         return;
                 }
@@ -163,9 +168,10 @@ public class CropImage : MonoBehaviour
         int newIMG_Height = 0;
         int newIMG_Width = 0;
         int resizeKoef = 0; //Показатель на сколько изображение будет смещаться относительно  размера текстуры
-        try
+        if (!isImageScale)
         {
-            
+            try
+            {
                 if (texture.width > texture.height)
                 {
                     if ((resizeKoef = (texture.width / gorizontalBlockCount - texture.height / verticalBlockCount)) > 0)
@@ -193,22 +199,68 @@ public class CropImage : MonoBehaviour
                     newIMG_Width = texture.width + resizeKoef;
                     newIMG_Height = texture.height;
                 }
-               
-
-            
-               
+            }
+            catch (System.Exception e)
+            {
+                print(e.Message);
+            }
         }
-        catch (System.Exception e)
+        else
         {
-            print(e.Message);
-        }
+            try
+            {
+                if (texture.width > texture.height)
+                {
+                    if ((resizeKoef = (texture.width / gorizontalBlockCount - texture.height / verticalBlockCount)) > 0)
+                    {
+                        newIMG_Width = texture.width - resizeKoef * gorizontalBlockCount;
+                        newIMG_Height = texture.height;
+                    }
+                    else
+                    {
+                        resizeKoef *= -1;
+                        newIMG_Height = texture.height - resizeKoef * verticalBlockCount;
+                        newIMG_Width = texture.width;
+                    }
+                }
+                else if (texture.width < texture.height)
+                {
+                    resizeKoef = (texture.height / verticalBlockCount - texture.width / gorizontalBlockCount) * gorizontalBlockCount;
+                    newIMG_Width = texture.width - resizeKoef;
+                    newIMG_Height = texture.height;
+                }
+                else if (texture.width == texture.height)
+                {
 
+                    resizeKoef = (texture.height / verticalBlockCount - texture.width / gorizontalBlockCount) * gorizontalBlockCount;
+                    newIMG_Width = texture.width - resizeKoef;
+                    newIMG_Height = texture.height;
+                }
+
+
+            }
+            catch (System.Exception e)
+            {
+                print(e.Message);
+            }
+
+        }
         Texture2D new_texture = new Texture2D(newIMG_Width, newIMG_Height, TextureFormat.ARGB32, false);
-        Color[] c = texture.GetPixels(0, 0, texture.width, texture.height);
+        Color[] c;
+        if (!isImageScale)
+        {
+            c = texture.GetPixels(0, 0, texture.width, texture.height);
+            new_texture.SetPixels((newIMG_Width - texture.width) / 2, (newIMG_Height - texture.height) / 2, texture.width, texture.height, c, 0);
+        }
+        else
+        {
+            c = texture.GetPixels((texture.width - newIMG_Width) / 2, (texture.height - newIMG_Height) / 2, newIMG_Width, newIMG_Height);
+            new_texture.SetPixels(0, 0, newIMG_Width, newIMG_Height, c, 0);
+        }
         Debug.LogFormat(" x  - {0} ,y  - {1}", (newIMG_Width - texture.width) / 2, (newIMG_Height - texture.height) / 2);
 
      
-        new_texture.SetPixels((newIMG_Width - texture.width) / 2, (newIMG_Height - texture.height) / 2, texture.width, texture.height, c,0);
+        
 
         texture = new_texture;
     }
@@ -221,9 +273,9 @@ public class CropImage : MonoBehaviour
         int countBlocks = 0;
         Vector3 rotate = new Vector3();
         generator = new PuzzleGenerator(verticalBlockCount, gorizontalBlockCount);
+        
         for (int y = 0; y < verticalBlockCount; y++)
             {
-               
                 for (int x = 0; x < gorizontalBlockCount; x++)
                 {
 
@@ -245,11 +297,11 @@ public class CropImage : MonoBehaviour
                     continue;
                 }
 
-                // tempMosaicBlock.obj = Instantiate(currentBlock, new Vector3(Random.Range(0 - Backplate.transform.localScale.x / 2 * 0.70f, Backplate.transform.localScale.x / 2 * 0.70f), Random.Range(0 - Backplate.transform.localScale.y / 2 * 0.70f, Backplate.transform.localScale.y / 2 * 0.70f), 0.06f), Quaternion.Euler(rotate));
-                tempMosaicBlock.obj = Instantiate(currentBlock,new Vector3( x, y, 0.06f), Quaternion.Euler(rotate));
+                tempMosaicBlock.obj = Instantiate(currentBlock, new Vector3(Random.Range(0 - Backplate.transform.localScale.x / 2 * 0.70f, Backplate.transform.localScale.x / 2 * 0.70f), Random.Range(0 - Backplate.transform.localScale.y / 2 * 0.70f, Backplate.transform.localScale.y / 2 * 0.70f), 0.06f), Quaternion.Euler(rotate));
+                //tempMosaicBlock.obj = Instantiate(currentBlock,new Vector3( x, y, 0.06f), Quaternion.Euler(rotate));
 
                 tempMosaicBlock.obj.name = countBlocks.ToString();
-               // tempMosaicBlock.obj.transform.root.transform.localScale = new Vector3 { x = scaleX, y = 1.0f, z = scaleZ };
+                tempMosaicBlock.obj.transform.root.transform.localScale = new Vector3 { x = scaleX, y = 1.0f, z = scaleZ };
                 tempMosaicBlock.vector3rotate = rotate;
                 tempMosaicBlock.blockID = x + y * gorizontalBlockCount;
 

@@ -7,6 +7,8 @@ public static class GameEvents
     static public int[] collectedMosaicBlock;
     static public Dictionary<int, MosaicTile> GameObjectMosaicDictionaty;
     static public Dictionary<int, GameObject> MosaicTileDictionaty;
+    static public GameObject GameOver = GameObject.Find("GameOver");
+
     public struct MosaicTile
     {
         public GameObject obj;

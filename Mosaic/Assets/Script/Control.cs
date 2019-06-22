@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Control : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class Control : MonoBehaviour
     public static int count = 1;
     void Start()
     {
+        GameEvents.GameOver.SetActive(false);
         defaultShader = this.GetComponent<Renderer>().material.shader;
         defaultTransformPosition = this.transform.position;
         targetCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
@@ -58,16 +60,19 @@ public class Control : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-           
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                return;
+            }
             if (isSelected)
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out vision, 100.0f))
                 {
-                    if (vision.collider.tag == "mosaicBlock" && TilePlate)
-                    {
-                        //this.transform.position = defaultTransformPosition;
+                    //if (vision.collider.tag == "mosaicBlock" && TilePlate)
+                    //{
+                    //    this.transform.position = defaultTransformPosition;
                       
-                    }
-                        Debug.Log("CLICK BLOCK");
+                    //}
+                    //    Debug.Log("CLICK BLOCK");
                     if (vision.collider.tag == "mosaicTile")
                     {
                         posVec = vision.transform.position;
@@ -122,8 +127,12 @@ public class Control : MonoBehaviour
     }
     private void OnMouseDown()
     {
-       
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
         this.GetComponent<Renderer>().material.shader = Shader.Find("Custom/OutlineObjects");
+       
         isSelected = true;
     }
     private void OnMouseDrag()
@@ -164,12 +173,14 @@ public class Control : MonoBehaviour
 
                     GameEvents.addToSolution(int.Parse(hits[i].collider.name), blockID);
                     if (GameEvents.checkedSolution())
-                        Debug.LogFormat("{0}", "Победа!");
+                        GameEvents.GameOver.SetActive(true);
 
                     return;
                 }
             }
-        }       
+        }
+       
+
     }
     
 }

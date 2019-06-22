@@ -4,10 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;
 using System;
+using SFB;
 
-
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 public class UIEvents : MonoBehaviour
 {
+    
     // Start is called before the first frame update
     private int slider_Gorizontal = 0;
     private int slider_Vertical = 0;
@@ -27,6 +31,9 @@ public class UIEvents : MonoBehaviour
 
     public GameObject MosaicInitializator;
 
+    
+    public Button GameOverButton;
+
     private string path;
     private bool isShow = false;
 
@@ -40,13 +47,17 @@ public class UIEvents : MonoBehaviour
         ShowButton.onClick.AddListener(delegate { ShowSettings(); });
         slider1_Text.text = CropImage.gorizontalBlockCount.ToString();
         slider2_Text.text = CropImage.verticalBlockCount.ToString();
+        GameOverButton.onClick.AddListener(delegate { ReloadedLevel2(); });
     }
 
     // Update is called once per frame
     void Update()
     {
-       
-       
+        if (Input.GetKey("escape"))
+        {
+            Application.Quit();
+        }
+
     }
     public void ValueChangeCheck()
     {
@@ -62,11 +73,18 @@ public class UIEvents : MonoBehaviour
     }
     public void ExportNewImage()
     {
-        path = EditorUtility.OpenFilePanel("Выберите изображение для импорта...","","png,jpg,jpeg");
+        var extensions = new[] {
+            new ExtensionFilter("Image Files", "png", "jpg", "jpeg" ),
+            new ExtensionFilter("All Files", "*" ),
+        };
+        var paths = StandaloneFileBrowser.OpenFilePanel("Выберите изображение для импорта...","", extensions, false);
+        path = paths[0];
         imageURL_Field.text = path;
     }
     public void ReloadedLevel()
     {
+        if (path == null)
+            return;
         if (path.Length == 0)
             return;
         foreach (var obj in GameEvents.GameObjectMosaicDictionaty)
@@ -86,9 +104,29 @@ public class UIEvents : MonoBehaviour
         //MosaicInitializator.GetComponent<CropImage>().gameObject.
         // Backplate.
     }
+    public void ReloadedLevel2()
+    {
+       
+        foreach (var obj in GameEvents.GameObjectMosaicDictionaty)
+        {
+            Destroy(obj.Value.obj);
+        }
+        foreach (var obj in GameEvents.MosaicTileDictionaty)
+        {
+            Destroy(obj.Value);
+        }
+        Array.Clear(GameEvents.collectedMosaicBlock, 0, GameEvents.collectedMosaicBlock.Length);
+     
+       
+        var scriptName = MosaicInitializator.GetComponent<CropImage>();
+        scriptName.runCropProcess();
+        //MosaicInitializator.GetComponent<CropImage>().gameObject.
+        // Backplate.
+    }
     private void ShowSettings()
     {
         isShow = !isShow;
         Panel.SetActive(isShow);
     }
+
 }
